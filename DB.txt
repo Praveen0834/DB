@@ -1,0 +1,96 @@
+CREATE TABLE IF NOT EXISTS public.product_details
+(
+    product_id integer NOT NULL GENERATED ALWAYS AS IDENTITY ( INCREMENT 1 START 1 MINVALUE 1 MAXVALUE 2147483647 CACHE 1 ),
+    product_category text COLLATE pg_catalog."default" NOT NULL,
+    mrp integer NOT NULL,
+    weight double precision NOT NULL,
+    product_name text COLLATE pg_catalog."default" NOT NULL,
+    created_at text COLLATE pg_catalog."default" NOT NULL,
+    modified_at text COLLATE pg_catalog."default" NOT NULL,
+    created_by text COLLATE pg_catalog."default",
+    modified_by text COLLATE pg_catalog."default",
+    CONSTRAINT product_details_pkey PRIMARY KEY (product_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.product_details
+    OWNER to postgres;
+
+
+CREATE TABLE IF NOT EXISTS public.user_details
+(
+    user_id integer NOT NULL,
+    username text COLLATE pg_catalog."default" NOT NULL,
+    password text COLLATE pg_catalog."default" NOT NULL,
+    first_name text COLLATE pg_catalog."default" NOT NULL,
+    last_name text COLLATE pg_catalog."default" NOT NULL,
+    address text COLLATE pg_catalog."default" NOT NULL,
+    phone_no text COLLATE pg_catalog."default" NOT NULL,
+    created_at text COLLATE pg_catalog."default" NOT NULL,
+    modified_at text COLLATE pg_catalog."default" NOT NULL,
+    created_by text COLLATE pg_catalog."default",
+    modified_by text COLLATE pg_catalog."default",
+    CONSTRAINT user_details_pkey PRIMARY KEY (user_id)
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.user_details
+    OWNER to postgres;
+
+
+CREATE TABLE IF NOT EXISTS public.order_details
+(
+    order_id integer NOT NULL,
+    product_id integer NOT NULL,
+    user_id integer NOT NULL,
+    total_amount double precision NOT NULL,
+    created_at text COLLATE pg_catalog."default" NOT NULL,
+    modified_at text COLLATE pg_catalog."default" NOT NULL,
+    created_by text COLLATE pg_catalog."default",
+    modified_by text COLLATE pg_catalog."default",
+    CONSTRAINT order_details_pkey PRIMARY KEY (order_id),
+    CONSTRAINT fk_product_id FOREIGN KEY (product_id)
+        REFERENCES public.product_details (product_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_user_id FOREIGN KEY (user_id)
+        REFERENCES public.user_details (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.order_details
+    OWNER to postgres;
+
+
+
+
+CREATE TABLE IF NOT EXISTS public.payment_details
+(
+    transaction_id integer NOT NULL,
+    user_id integer NOT NULL,
+    order_id integer NOT NULL,
+    amount double precision NOT NULL,
+    created_at text COLLATE pg_catalog."default" NOT NULL,
+    modified_at text COLLATE pg_catalog."default" NOT NULL,
+    created_by text COLLATE pg_catalog."default",
+    modified_by text COLLATE pg_catalog."default",
+    CONSTRAINT payment_details_pkey PRIMARY KEY (transaction_id),
+    CONSTRAINT fk_order_id FOREIGN KEY (order_id)
+        REFERENCES public.order_details (order_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION,
+    CONSTRAINT fk_user_id FOREIGN KEY (user_id)
+        REFERENCES public.user_details (user_id) MATCH SIMPLE
+        ON UPDATE NO ACTION
+        ON DELETE NO ACTION
+)
+
+TABLESPACE pg_default;
+
+ALTER TABLE IF EXISTS public.payment_details
+    OWNER to postgres;
